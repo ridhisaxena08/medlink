@@ -16,7 +16,7 @@ info:
     **Envelope.** Success: `{ "success": true, "data": ..., "meta"?: ... }`.
     Failure: `{ "success": false, "error": { "code", "message", "details"? }, "requestId" }`.
 servers:
-  - url: http://localhost:5000/api
+  - url: https://medlink-8vbl.onrender.com/api
     description: Local development
 tags:
   - name: Auth
@@ -60,15 +60,15 @@ components:
       name: patient
       in: query
       description: Target patient id. Omitted means the caller themselves.
-      schema: { $ref: '#/components/schemas/ObjectId' }
+      schema: { $ref: "#/components/schemas/ObjectId" }
   schemas:
     ObjectId:
       type: string
-      pattern: '^[0-9a-fA-F]{24}$'
+      pattern: "^[0-9a-fA-F]{24}$"
       example: 507f1f77bcf86cd799439011
     Coordinates:
       type: array
-      description: '[longitude, latitude]'
+      description: "[longitude, latitude]"
       minItems: 2
       maxItems: 2
       items: { type: number }
@@ -79,8 +79,18 @@ components:
     ConsentScope:
       type: string
       enum:
-        [profile, medical_history, documents, medications, reminders,
-         appointments, prescriptions, emergency, location, sms]
+        [
+          profile,
+          medical_history,
+          documents,
+          medications,
+          reminders,
+          appointments,
+          prescriptions,
+          emergency,
+          location,
+          sms,
+        ]
     Error:
       type: object
       properties:
@@ -109,13 +119,13 @@ components:
       required: [name, phone, password, role]
       properties:
         name: { type: string, minLength: 2 }
-        phone: { type: string, example: '+919876543210' }
+        phone: { type: string, example: "+919876543210" }
         email: { type: string, format: email }
         password:
           type: string
           minLength: 8
           description: Must contain at least one letter and one digit.
-        role: { $ref: '#/components/schemas/Role' }
+        role: { $ref: "#/components/schemas/Role" }
         preferredLanguage: { type: string, enum: [en, hi], default: en }
         profile:
           type: object
@@ -135,36 +145,38 @@ components:
       type: object
       required: [grantee, granteeRole, scopes]
       properties:
-        grantee: { $ref: '#/components/schemas/ObjectId' }
-        granteeRole: { $ref: '#/components/schemas/Role' }
+        grantee: { $ref: "#/components/schemas/ObjectId" }
+        granteeRole: { $ref: "#/components/schemas/Role" }
         scopes:
           type: array
           minItems: 1
-          items: { $ref: '#/components/schemas/ConsentScope' }
+          items: { $ref: "#/components/schemas/ConsentScope" }
         purpose: { type: string }
         durationDays: { type: integer, minimum: 1, maximum: 730 }
         patient:
-          allOf: [{ $ref: '#/components/schemas/ObjectId' }]
+          allOf: [{ $ref: "#/components/schemas/ObjectId" }]
           description: Assisted flows only; requires recorded (non in-app) evidence.
         evidence:
           type: object
           properties:
-            method: { type: string, enum: [in_app, otp, verbal_recorded, paper] }
+            method:
+              { type: string, enum: [in_app, otp, verbal_recorded, paper] }
             reference: { type: string }
     AppointmentRequest:
       type: object
       required: [doctor, scheduledStart, reason]
       properties:
-        doctor: { $ref: '#/components/schemas/ObjectId' }
-        hospital: { $ref: '#/components/schemas/ObjectId' }
-        department: { $ref: '#/components/schemas/ObjectId' }
+        doctor: { $ref: "#/components/schemas/ObjectId" }
+        hospital: { $ref: "#/components/schemas/ObjectId" }
+        department: { $ref: "#/components/schemas/ObjectId" }
         scheduledStart: { type: string, format: date-time }
         durationMinutes: { type: integer, minimum: 5, maximum: 180 }
-        mode: { type: string, enum: [in_person, teleconsult], default: in_person }
+        mode:
+          { type: string, enum: [in_person, teleconsult], default: in_person }
         reason: { type: string }
         symptoms: { type: array, items: { type: string } }
         patient:
-          allOf: [{ $ref: '#/components/schemas/ObjectId' }]
+          allOf: [{ $ref: "#/components/schemas/ObjectId" }]
           description: Required when an ASHA worker or hospital books on behalf of a patient.
     SosRequest:
       type: object
@@ -172,14 +184,16 @@ components:
       properties:
         emergencyType:
           type: string
-          enum: [medical, accident, cardiac, maternity, respiratory, trauma, other]
-        severity: { type: string, enum: [low, medium, high, critical], default: high }
+          enum:
+            [medical, accident, cardiac, maternity, respiratory, trauma, other]
+        severity:
+          { type: string, enum: [low, medium, high, critical], default: high }
         description: { type: string }
         symptoms: { type: array, items: { type: string } }
-        location: { $ref: '#/components/schemas/Coordinates' }
+        location: { $ref: "#/components/schemas/Coordinates" }
         pickupAddress: { type: string }
         landmark: { type: string }
-        patient: { $ref: '#/components/schemas/ObjectId' }
+        patient: { $ref: "#/components/schemas/ObjectId" }
         notifyRadiusKm: { type: number, default: 20 }
     SyncPushRequest:
       type: object
@@ -191,12 +205,21 @@ components:
           maxItems: 200
           items:
             type: object
-            required: [clientRecordId, entity, operation, payload, clientUpdatedAt]
+            required:
+              [clientRecordId, entity, operation, payload, clientUpdatedAt]
             properties:
               clientRecordId: { type: string }
               entity:
                 type: string
-                enum: [medical_record, follow_up, reminder, appointment, emergency_request, document]
+                enum:
+                  [
+                    medical_record,
+                    follow_up,
+                    reminder,
+                    appointment,
+                    emergency_request,
+                    document,
+                  ]
               operation: { type: string, enum: [create, update, delete] }
               payload: { type: object }
               clientUpdatedAt: { type: string, format: date-time }
@@ -206,37 +229,37 @@ components:
       description: Success
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Success' }
+          schema: { $ref: "#/components/schemas/Success" }
     Created:
       description: Created
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Success' }
+          schema: { $ref: "#/components/schemas/Success" }
     BadRequest:
       description: Validation failed
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema: { $ref: "#/components/schemas/Error" }
     Unauthorized:
       description: Missing or invalid token
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema: { $ref: "#/components/schemas/Error" }
     Forbidden:
       description: Access denied by role, consent, assignment or scope
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema: { $ref: "#/components/schemas/Error" }
     NotFound:
       description: Not found
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema: { $ref: "#/components/schemas/Error" }
     Conflict:
       description: Conflicting state
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema: { $ref: "#/components/schemas/Error" }
 
 paths:
   /auth/register:
@@ -248,11 +271,11 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/RegisterRequest' }
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '409': { $ref: '#/components/responses/Conflict' }
+        "201": { $ref: "#/components/responses/Created" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /auth/login:
     post:
       tags: [Auth]
@@ -262,10 +285,10 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/LoginRequest' }
+            schema: { $ref: "#/components/schemas/LoginRequest" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
   /auth/refresh:
     post:
       tags: [Auth]
@@ -280,38 +303,38 @@ paths:
               required: [refreshToken]
               properties: { refreshToken: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
   /auth/logout:
     post:
       tags: [Auth]
       summary: Revoke the current session, or all of them
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /auth/change-password:
     post:
       tags: [Auth]
       summary: Change the password and revoke every session
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /users/me:
     get:
       tags: [Users]
       summary: Account identity plus the role-specific profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     patch:
       tags: [Users]
       summary: Update account-level fields
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /users/me/deactivate:
     post:
       tags: [Users]
       summary: Deactivate the account and end all sessions
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /consents:
     post:
@@ -321,10 +344,10 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/ConsentRequest' }
+            schema: { $ref: "#/components/schemas/ConsentRequest" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "201": { $ref: "#/components/responses/Created" }
+        "403": { $ref: "#/components/responses/Forbidden" }
     get:
       tags: [Consent]
       summary: List consents granted by or received by the caller
@@ -335,102 +358,135 @@ paths:
         - name: status
           in: query
           schema: { type: string, enum: [active, revoked, expired] }
-        - { $ref: '#/components/parameters/page' }
-        - { $ref: '#/components/parameters/limit' }
+        - { $ref: "#/components/parameters/page" }
+        - { $ref: "#/components/parameters/limit" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /consents/{id}:
     delete:
       tags: [Consent]
       summary: Revoke a consent (patient or admin only)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
 
   /patients/me:
     get:
       tags: [Patient]
       summary: The signed-in patient's profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     put:
       tags: [Patient]
       summary: Update the patient profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /patients/dashboard:
     get:
       tags: [Patient]
       summary: Appointments, medications, reminders, documents, consents and open emergencies
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /patients/medical-history:
     get:
       tags: [Patient]
       summary: List medical history records
       parameters:
-        - { $ref: '#/components/parameters/patientQuery' }
+        - { $ref: "#/components/parameters/patientQuery" }
         - { name: type, in: query, schema: { type: string } }
-        - { name: status, in: query, schema: { type: string, enum: [active, resolved, inactive] } }
+        - {
+            name: status,
+            in: query,
+            schema: { type: string, enum: [active, resolved, inactive] },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
     post:
       tags: [Patient]
       summary: Add a condition, allergy, surgery, immunization or note
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /patients/medicines:
     get:
       tags: [Patient]
       summary: The patient's medication list
       parameters:
-        - { $ref: '#/components/parameters/patientQuery' }
-        - { name: status, in: query, schema: { type: string, enum: [active, completed, stopped] } }
+        - { $ref: "#/components/parameters/patientQuery" }
+        - {
+            name: status,
+            in: query,
+            schema: { type: string, enum: [active, completed, stopped] },
+          }
         - { name: confirmedOnly, in: query, schema: { type: boolean } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     post:
       tags: [Patient]
       summary: Add a medicine (entries added by others stay unconfirmed)
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /patients/medicines/{id}/confirm:
     patch:
       tags: [Patient]
       summary: Patient confirms a medicine, making it eligible for reminders
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /patients/medicines/{id}/stop:
     patch:
       tags: [Patient]
       summary: Stop a medicine
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /patients/{patientId}:
     get:
       tags: [Patient]
       summary: Another patient's profile (requires consent or an authorised relationship)
       parameters:
-        - { name: patientId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: patientId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /patients/{patientId}/dashboard:
     get:
       tags: [Patient]
       summary: Authorised view of another patient's dashboard
       parameters:
-        - { name: patientId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: patientId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
 
   /doctors:
     get:
@@ -441,58 +497,71 @@ paths:
         - { name: specialty, in: query, schema: { type: string } }
         - { name: language, in: query, schema: { type: string } }
         - { name: district, in: query, schema: { type: string } }
-        - { name: mode, in: query, schema: { type: string, enum: [in_person, teleconsult] } }
+        - {
+            name: mode,
+            in: query,
+            schema: { type: string, enum: [in_person, teleconsult] },
+          }
         - { name: maxFee, in: query, schema: { type: number } }
         - { name: minExperience, in: query, schema: { type: integer } }
         - { name: lng, in: query, schema: { type: number } }
         - { name: lat, in: query, schema: { type: number } }
         - { name: radiusKm, in: query, schema: { type: number, default: 25 } }
-        - { name: sort, in: query, schema: { type: string, enum: [experience, fee, rating, distance] } }
-        - { $ref: '#/components/parameters/page' }
-        - { $ref: '#/components/parameters/limit' }
+        - {
+            name: sort,
+            in: query,
+            schema: { type: string, enum: [experience, fee, rating, distance] },
+          }
+        - { $ref: "#/components/parameters/page" }
+        - { $ref: "#/components/parameters/limit" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /doctors/me:
     get:
       tags: [Doctor]
       summary: The signed-in doctor's profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     put:
       tags: [Doctor]
       summary: Update the doctor profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /doctors/availability:
     get:
       tags: [Doctor]
       summary: Read the weekly availability template and exceptions
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     post:
       tags: [Doctor]
       summary: Replace the weekly availability template
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /doctors/dashboard:
     get:
       tags: [Doctor]
       summary: Today's schedule plus pending requests and weekly counts
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /doctors/appointments:
     get:
       tags: [Doctor]
       summary: The doctor's appointments
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /doctors/appointments/{id}/status:
     patch:
       tags: [Doctor]
       summary: Accept, reject, complete or mark no-show
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       requestBody:
         required: true
         content:
@@ -501,53 +570,86 @@ paths:
               type: object
               required: [status]
               properties:
-                status: { type: string, enum: [confirmed, rejected, completed, no_show] }
+                status:
+                  {
+                    type: string,
+                    enum: [confirmed, rejected, completed, no_show],
+                  }
                 reason: { type: string }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /doctors/patients/{patientId}:
     get:
       tags: [Doctor]
       summary: Consolidated clinical view of an authorised patient
       parameters:
-        - { name: patientId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: patientId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /doctors/{doctorId}:
     get:
       tags: [Doctor]
       summary: Public profile of a verified doctor
       parameters:
-        - { name: doctorId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: doctorId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /doctors/{doctorId}/slots:
     get:
       tags: [Doctor]
       summary: Bookable slots for a given date
       parameters:
-        - { name: doctorId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
-        - { name: date, in: query, required: true, schema: { type: string, format: date } }
-        - { name: mode, in: query, schema: { type: string, enum: [in_person, teleconsult] } }
+        - {
+            name: doctorId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
+        - {
+            name: date,
+            in: query,
+            required: true,
+            schema: { type: string, format: date },
+          }
+        - {
+            name: mode,
+            in: query,
+            schema: { type: string, enum: [in_person, teleconsult] },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /consultations:
     post:
       tags: [Doctor]
       summary: Record a consultation (completes the linked appointment)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /consultations/{id}:
     get:
       tags: [Doctor]
       summary: Read a consultation note
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /appointments:
     post:
@@ -557,11 +659,11 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/AppointmentRequest' }
+            schema: { $ref: "#/components/schemas/AppointmentRequest" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '409': { $ref: '#/components/responses/Conflict' }
+        "201": { $ref: "#/components/responses/Created" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /appointments/my:
     get:
       tags: [Appointments]
@@ -572,61 +674,86 @@ paths:
         - { name: from, in: query, schema: { type: string, format: date-time } }
         - { name: to, in: query, schema: { type: string, format: date-time } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /appointments/{id}:
     get:
       tags: [Appointments]
       summary: Read one appointment
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /appointments/{id}/cancel:
     patch:
       tags: [Appointments]
       summary: Cancel an appointment
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /appointments/{id}/reschedule:
     patch:
       tags: [Appointments]
       summary: Move an appointment to another published slot
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '409': { $ref: '#/components/responses/Conflict' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "409": { $ref: "#/components/responses/Conflict" }
 
   /medical-records:
     get:
       tags: [Medical records]
       summary: List medical records for an authorised patient
       parameters:
-        - { $ref: '#/components/parameters/patientQuery' }
+        - { $ref: "#/components/parameters/patientQuery" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     post:
       tags: [Medical records]
       summary: Create a medical record (source is derived from the author's role)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /medical-records/{id}:
     patch:
       tags: [Medical records]
       summary: Update a record (author or clinician)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     delete:
       tags: [Medical records]
       summary: Delete a record (patient or admin)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /files/upload:
     post:
@@ -644,12 +771,23 @@ paths:
                 title: { type: string }
                 category:
                   type: string
-                  enum: [prescription, lab_report, scan, discharge_summary, insurance, id_proof, certificate, medicine_image, other]
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                  enum:
+                    [
+                      prescription,
+                      lab_report,
+                      scan,
+                      discharge_summary,
+                      insurance,
+                      id_proof,
+                      certificate,
+                      medicine_image,
+                      other,
+                    ]
+                patient: { $ref: "#/components/schemas/ObjectId" }
                 tags: { type: string, description: Comma-separated }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "201": { $ref: "#/components/responses/Created" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /files:
     post:
       tags: [Files]
@@ -665,69 +803,84 @@ paths:
                 file: { type: string, format: binary }
                 title: { type: string }
                 category: { type: string }
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                patient: { $ref: "#/components/schemas/ObjectId" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Files]
       summary: List documents for an authorised patient
       parameters:
-        - { $ref: '#/components/parameters/patientQuery' }
+        - { $ref: "#/components/parameters/patientQuery" }
         - { name: category, in: query, schema: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /files/{id}:
     get:
       tags: [Files]
       summary: Download a document
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200':
+        "200":
           description: The file
           content:
             application/octet-stream:
               schema: { type: string, format: binary }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "403": { $ref: "#/components/responses/Forbidden" }
     delete:
       tags: [Files]
       summary: Archive a document
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /files/{id}/meta:
     get:
       tags: [Files]
       summary: Document metadata without the bytes
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /asha/me:
     get:
       tags: [ASHA]
       summary: The signed-in worker's profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     put:
       tags: [ASHA]
       summary: Update the worker profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /asha/dashboard:
     get:
       tags: [ASHA]
       summary: Caseload, consent gaps, due visits and expiring assignments
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /asha/patients:
     get:
       tags: [ASHA]
       summary: Assigned patients, each flagged with whether consent is actually active
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     post:
       tags: [ASHA]
       summary: Assisted registration (requires recorded consent evidence)
@@ -746,87 +899,102 @@ paths:
                   type: object
                   required: [scopes, evidence]
                   properties:
-                    scopes: { type: array, items: { $ref: '#/components/schemas/ConsentScope' } }
+                    scopes:
+                      {
+                        type: array,
+                        items: { $ref: "#/components/schemas/ConsentScope" },
+                      }
                     durationDays: { type: integer }
                     evidence:
                       type: object
                       required: [method]
                       properties:
-                        method: { type: string, enum: [otp, verbal_recorded, paper] }
+                        method:
+                          { type: string, enum: [otp, verbal_recorded, paper] }
                         reference: { type: string }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "201": { $ref: "#/components/responses/Created" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /asha/patients/{patientId}:
     get:
       tags: [ASHA]
       summary: An assigned patient's profile (assignment and consent both required)
       parameters:
-        - { name: patientId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: patientId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /asha/assignments:
     post:
       tags: [ASHA]
       summary: Assign a patient to a worker (hospital or admin only)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "201": { $ref: "#/components/responses/Created" }
+        "403": { $ref: "#/components/responses/Forbidden" }
     get:
       tags: [ASHA]
       summary: List assignments visible to the caller
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /asha/assignments/{id}:
     delete:
       tags: [ASHA]
       summary: Revoke an assignment (patient, assigning hospital or admin)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /asha/followups:
     post:
       tags: [ASHA]
       summary: Record a home visit or follow-up
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [ASHA]
       summary: List follow-ups
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /asha/appointments:
     post:
       tags: [ASHA]
       summary: Book an appointment for an assigned patient
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /asha/reminders:
     post:
       tags: [ASHA]
       summary: Propose a medicine reminder (inactive until the patient approves)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
 
   /hospitals/me:
     get:
       tags: [Hospital]
       summary: Facility profile
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     put:
       tags: [Hospital]
       summary: Update facility details, services, capacity and location
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/dashboard:
     get:
       tags: [Hospital]
       summary: Today's load, staff counts and open emergencies
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/reports:
     get:
       tags: [Hospital]
@@ -835,142 +1003,181 @@ paths:
         - { name: from, in: query, schema: { type: string, format: date-time } }
         - { name: to, in: query, schema: { type: string, format: date-time } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/doctors:
     post:
       tags: [Hospital]
       summary: Register a doctor already verified by this facility
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Hospital]
       summary: List affiliated doctors
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/doctors/link:
     post:
       tags: [Hospital]
       summary: Link an existing doctor to this facility
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/doctors/{id}/verify:
     patch:
       tags: [Hospital]
       summary: Verify or reject an affiliated doctor
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/departments:
     post:
       tags: [Hospital]
       summary: Create a department
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Hospital]
       summary: List departments
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/asha:
     post:
       tags: [Hospital]
       summary: Register an ASHA worker for this facility
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Hospital]
       summary: List ASHA workers
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/asha/{id}/verify:
     patch:
       tags: [Hospital]
       summary: Verify or reject an ASHA worker
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/asha/assignments:
     post:
       tags: [Hospital]
       summary: Assign a patient to an ASHA worker
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /hospitals/appointments:
     get:
       tags: [Hospital]
       summary: Appointments at this facility
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/emergency-requests:
     get:
       tags: [Hospital]
       summary: Incoming and assigned emergencies
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /hospitals/emergency-requests/{id}/assign:
     post:
       tags: [Hospital]
       summary: Offer an emergency to a verified, available responder
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '409': { $ref: '#/components/responses/Conflict' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /hospitals/emergency-requests/{id}/status:
     patch:
       tags: [Hospital]
       summary: Advance the emergency status
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /admin/dashboard:
     get:
       tags: [Admin]
       summary: Platform adoption, operations and access-control posture
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/users:
     get:
       tags: [Admin]
       summary: List accounts
       parameters:
-        - { name: role, in: query, schema: { $ref: '#/components/schemas/Role' } }
-        - { name: status, in: query, schema: { type: string, enum: [pending, active, suspended, deactivated] } }
+        - {
+            name: role,
+            in: query,
+            schema: { $ref: "#/components/schemas/Role" },
+          }
+        - {
+            name: status,
+            in: query,
+            schema:
+              { type: string, enum: [pending, active, suspended, deactivated] },
+          }
         - { name: q, in: query, schema: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/users/{id}/status:
     patch:
       tags: [Admin]
       summary: Suspend, activate or deactivate an account (revokes sessions immediately)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/verifications:
     get:
       tags: [Admin]
       summary: Verification queue across doctor, ASHA, hospital and responder profiles
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/verifications/{id}:
     patch:
       tags: [Admin]
       summary: Verify or reject a staff profile
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/audit-logs:
     get:
       tags: [Admin]
       summary: Full audit trail
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /admin/access-report:
     get:
       tags: [Admin]
@@ -978,19 +1185,19 @@ paths:
       parameters:
         - { name: days, in: query, schema: { type: integer, default: 7 } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /responders/me:
     get:
       tags: [Responder]
       summary: Responder profile and vehicle
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     put:
       tags: [Responder]
       summary: Update responder details
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /responders/availability:
     put:
       tags: [Responder]
@@ -1004,71 +1211,96 @@ paths:
               required: [isAvailable]
               properties:
                 isAvailable: { type: boolean }
-                location: { $ref: '#/components/schemas/Coordinates' }
+                location: { $ref: "#/components/schemas/Coordinates" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /responders/assignments:
     get:
       tags: [Responder]
       summary: Offered and active assignments
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /responders/assignments/{id}:
     get:
       tags: [Responder]
       summary: Incident detail; the clinical snapshot is hidden once the grant lapses
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /responders/assignments/{id}/accept:
     post:
       tags: [Responder]
       summary: Accept an offer before it expires
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /responders/assignments/{id}/decline:
     post:
       tags: [Responder]
       summary: Decline an offer and release the request
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /responders/assignments/{id}/navigation:
     get:
       tags: [Responder]
       summary: Destination and distance for the current phase
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /responders/assignments/{id}/status:
     patch:
       tags: [Responder]
       summary: Advance the emergency (en_route, arrived, transporting, at_hospital, completed)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /responders/location:
     post:
       tags: [Responder]
       summary: Post a live location against the active assignment
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /responders/history:
     get:
       tags: [Responder]
       summary: Completed assignments and personal stats
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /emergency/sos:
     post:
@@ -1078,84 +1310,119 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/SosRequest' }
+            schema: { $ref: "#/components/schemas/SosRequest" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
-        '409': { $ref: '#/components/responses/Conflict' }
+        "201": { $ref: "#/components/responses/Created" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /emergency/my-requests:
     get:
       tags: [Emergency]
       summary: Emergencies raised by or for the caller
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency/requests/{id}:
     get:
       tags: [Emergency]
       summary: Read one emergency request
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /emergency/requests/{id}/assign:
     post:
       tags: [Emergency]
       summary: Assign a responder (hospital or admin)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency/requests/{id}/status:
     patch:
       tags: [Emergency]
       summary: Advance the status, validated against the state machine
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
   /emergency/requests/{id}/location:
     post:
       tags: [Emergency]
       summary: Post an authenticated location update
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /emergency/requests/{id}/tracking:
     get:
       tags: [Emergency]
       summary: Live position, distance, ETA and recent trail
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency/contacts:
     post:
       tags: [Emergency]
       summary: Add a trusted contact
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Emergency]
       summary: List trusted contacts
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency/contacts/{contactId}:
     patch:
       tags: [Emergency]
       summary: Update a trusted contact
       parameters:
-        - { name: contactId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: contactId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     delete:
       tags: [Emergency]
       summary: Remove a trusted contact
       parameters:
-        - { name: contactId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: contactId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency/hospitals/nearby:
     get:
       tags: [Emergency]
@@ -1166,7 +1433,7 @@ paths:
         - { name: radiusKm, in: query, schema: { type: number, default: 20 } }
         - { name: requiresIcu, in: query, schema: { type: boolean } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /intelligence/chat:
     post:
@@ -1193,7 +1460,7 @@ paths:
                   default: false
                   description: Opt-in; attaches the caller's own summary and medications.
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /intelligence/scan:
     post:
       tags: [Intelligence]
@@ -1209,50 +1476,69 @@ paths:
               properties:
                 image: { type: string, format: binary }
                 kind: { type: string, enum: [medicine_strip, prescription] }
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                patient: { $ref: "#/components/schemas/ObjectId" }
                 saveDocument: { type: boolean }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /intelligence/identify:
     post:
       tags: [Intelligence]
       summary: Match text (often extracted on-device) against the catalogue
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /intelligence/speak:
     post:
       tags: [Intelligence]
       summary: Text-to-speech; falls back to device TTS when no provider is configured
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /medicines/search:
     get:
       tags: [Intelligence]
       summary: Search the medicine catalogue
       parameters:
-        - { name: q, in: query, required: true, schema: { type: string, minLength: 2 } }
+        - {
+            name: q,
+            in: query,
+            required: true,
+            schema: { type: string, minLength: 2 },
+          }
         - { name: form, in: query, schema: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /medicines/{id}:
     get:
       tags: [Intelligence]
       summary: Catalogue entry
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /medicines/{id}/explanation:
     get:
       tags: [Intelligence]
       summary: Curated Hindi or English explanation
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
-        - { name: lang, in: query, schema: { type: string, enum: [en, hi], default: en } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
+        - {
+            name: lang,
+            in: query,
+            schema: { type: string, enum: [en, hi], default: en },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '404': { $ref: '#/components/responses/NotFound' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "404": { $ref: "#/components/responses/NotFound" }
   /interactions/check:
     post:
       tags: [Intelligence]
@@ -1265,94 +1551,118 @@ paths:
               type: object
               properties:
                 ingredients: { type: array, items: { type: string } }
-                medicineIds: { type: array, items: { $ref: '#/components/schemas/ObjectId' } }
+                medicineIds:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/ObjectId" },
+                  }
                 includePatientMedications: { type: boolean, default: false }
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                patient: { $ref: "#/components/schemas/ObjectId" }
                 lang: { type: string, enum: [en, hi] }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /prescriptions:
     post:
       tags: [Intelligence]
       summary: Issue a prescription (doctors only)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Intelligence]
       summary: List prescriptions for an authorised patient
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /prescriptions/parse:
     post:
       tags: [Intelligence]
       summary: Parse prescription text into unverified draft items
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /prescriptions/verify:
     post:
       tags: [Intelligence]
       summary: Human verification; optionally adds accepted items to the medication list
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /prescriptions/patient/{patientId}:
     get:
       tags: [Intelligence]
       summary: Prescriptions for a specific patient
       parameters:
-        - { name: patientId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: patientId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /prescriptions/{id}:
     get:
       tags: [Intelligence]
       summary: Read one prescription
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /reminders/generate:
     post:
       tags: [Intelligence]
       summary: Propose dose times from a confirmed medication or a frequency string
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /reminders:
     post:
       tags: [Intelligence]
       summary: Save a reminder; only the patient can activate one
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Intelligence]
       summary: List reminders
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /reminders/{id}:
     patch:
       tags: [Intelligence]
       summary: Update, approve, pause or cancel a reminder
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '403': { $ref: '#/components/responses/Forbidden' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /reminders/{id}/adherence:
     post:
       tags: [Intelligence]
       summary: Record a dose as taken, missed or skipped
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /sms/prepare:
     post:
       tags: [Intelligence]
       summary: Render the exact SMS body and segment count without sending
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /sms/send:
     post:
       tags: [Intelligence]
@@ -1365,37 +1675,45 @@ paths:
               type: object
               required: [patient, body, approved]
               properties:
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                patient: { $ref: "#/components/schemas/ObjectId" }
                 body: { type: string }
                 approved: { type: boolean, enum: [true] }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
+        "200": { $ref: "#/components/responses/Ok" }
+        "400": { $ref: "#/components/responses/BadRequest" }
 
   /offline-data/version:
     get:
       tags: [Intelligence]
       summary: Current bundle version and record counts
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /offline-data/medicines:
     get:
       tags: [Intelligence]
       summary: Versioned, cursor-paged medicine bundle for offline use
       parameters:
-        - { name: sinceVersion, in: query, schema: { type: integer, default: 0 } }
+        - {
+            name: sinceVersion,
+            in: query,
+            schema: { type: integer, default: 0 },
+          }
         - { name: cursor, in: query, schema: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /offline-data/interactions:
     get:
       tags: [Intelligence]
       summary: Versioned interaction-rule bundle for offline use
       parameters:
-        - { name: sinceVersion, in: query, schema: { type: integer, default: 0 } }
+        - {
+            name: sinceVersion,
+            in: query,
+            schema: { type: integer, default: 0 },
+          }
         - { name: cursor, in: query, schema: { type: string } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /notifications:
     get:
@@ -1404,21 +1722,26 @@ paths:
       parameters:
         - { name: unreadOnly, in: query, schema: { type: boolean } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /notifications/{id}/read:
     patch:
       tags: [Notifications]
       summary: Mark one notification read
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /notifications/read-all:
     patch:
       tags: [Notifications]
       summary: Mark every notification read
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /sync/push:
     post:
@@ -1428,38 +1751,51 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/SyncPushRequest' }
+            schema: { $ref: "#/components/schemas/SyncPushRequest" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /sync/pull:
     get:
       tags: [Sync]
       summary: Download changes the caller is still authorised to hold
       parameters:
-        - { name: deviceId, in: query, required: true, schema: { type: string } }
-        - { name: since, in: query, schema: { type: string, format: date-time } }
-        - { name: entities, in: query, schema: { type: string, description: Comma-separated } }
+        - {
+            name: deviceId,
+            in: query,
+            required: true,
+            schema: { type: string },
+          }
+        - {
+            name: since,
+            in: query,
+            schema: { type: string, format: date-time },
+          }
+        - {
+            name: entities,
+            in: query,
+            schema: { type: string, description: Comma-separated },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /sync/status:
     get:
       tags: [Sync]
       summary: Recent sync records and their outcomes
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /location/validate:
     post:
       tags: [Location]
       summary: Sanity-check a coordinate pair before using it for dispatch
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /location/share:
     post:
       tags: [Location]
       summary: Share a location against an open emergency
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /location/nearby:
     get:
       tags: [Location]
@@ -1467,9 +1803,13 @@ paths:
       parameters:
         - { name: lng, in: query, required: true, schema: { type: number } }
         - { name: lat, in: query, required: true, schema: { type: number } }
-        - { name: type, in: query, schema: { type: string, enum: [hospital, doctor] } }
+        - {
+            name: type,
+            in: query,
+            schema: { type: string, enum: [hospital, doctor] },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /audit-logs:
     get:
@@ -1478,18 +1818,22 @@ paths:
       parameters:
         - { name: action, in: query, schema: { type: string } }
         - { name: resourceType, in: query, schema: { type: string } }
-        - { name: outcome, in: query, schema: { type: string, enum: [success, denied, failure] } }
+        - {
+            name: outcome,
+            in: query,
+            schema: { type: string, enum: [success, denied, failure] },
+          }
         - { name: from, in: query, schema: { type: string, format: date-time } }
         - { name: to, in: query, schema: { type: string, format: date-time } }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /files/my:
     get:
       tags: [Files]
       summary: Alias of GET /files
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /documents:
     post:
       tags: [Files]
@@ -1505,34 +1849,39 @@ paths:
                 file: { type: string, format: binary }
                 title: { type: string }
                 category: { type: string }
-                patient: { $ref: '#/components/schemas/ObjectId' }
+                patient: { $ref: "#/components/schemas/ObjectId" }
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Files]
       summary: Alias of GET /files
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /documents/upload:
     post:
       tags: [Files]
       summary: Alias of POST /files/upload
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
   /documents/my:
     get:
       tags: [Files]
       summary: The caller's documents
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /documents/{id}:
     get:
       tags: [Files]
       summary: Alias of GET /files/{id}
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200':
+        "200":
           description: The file
           content:
             application/octet-stream:
@@ -1541,64 +1890,89 @@ paths:
       tags: [Files]
       summary: Alias of DELETE /files/{id}
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /documents/{id}/meta:
     get:
       tags: [Files]
       summary: Alias of GET /files/{id}/meta
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /emergency-contacts:
     post:
       tags: [Emergency]
       summary: Add a trusted contact (alias of /emergency/contacts)
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
     get:
       tags: [Emergency]
       summary: List trusted contacts (alias of /emergency/contacts)
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
   /emergency-contacts/{contactId}:
     patch:
       tags: [Emergency]
       summary: Update a trusted contact
       parameters:
-        - { name: contactId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: contactId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     delete:
       tags: [Emergency]
       summary: Remove a trusted contact
       parameters:
-        - { name: contactId, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: contactId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
 
   /medicines/patient:
     get:
       tags: [Intelligence]
       summary: The patient's medication list (alias of /patients/medicines)
       parameters:
-        - { $ref: '#/components/parameters/patientQuery' }
+        - { $ref: "#/components/parameters/patientQuery" }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
     post:
       tags: [Intelligence]
       summary: Add a medicine to a patient's list
       responses:
-        '201': { $ref: '#/components/responses/Created' }
+        "201": { $ref: "#/components/responses/Created" }
 
   /appointments/{id}/status:
     patch:
       tags: [Appointments]
       summary: Doctor-side status change (same handler as /doctors/appointments/{id}/status)
       parameters:
-        - { name: id, in: path, required: true, schema: { $ref: '#/components/schemas/ObjectId' } }
+        - {
+            name: id,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/ObjectId" },
+          }
       responses:
-        '200': { $ref: '#/components/responses/Ok' }
+        "200": { $ref: "#/components/responses/Ok" }
