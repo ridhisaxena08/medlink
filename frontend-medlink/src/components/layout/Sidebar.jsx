@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from "react";
 import {
   Home,
@@ -18,37 +17,17 @@ const NAV_ITEMS = [
   { id: "doctors", label: "Find Doctors", icon: Stethoscope },
   { id: "records", label: "Medical Records", icon: FileText },
   { id: "profile", label: "Profile & Settings", icon: Settings },
-=======
-import React from 'react';
-import { Home, Calendar, Stethoscope, FileText, Settings, HeartPulse } from 'lucide-react';
-import { useAsync } from '../../hooks/useAsync';
-import { appointments } from '../../lib/api';
-import EmergencyButton from './EmergencyButton';
-
-const NAV_ITEMS = [
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'appointments', label: 'Appointments', icon: Calendar },
-  { id: 'doctors', label: 'Find Doctors', icon: Stethoscope },
-  { id: 'records', label: 'Medical Records', icon: FileText },
-  { id: 'profile', label: 'Profile & Settings', icon: Settings },
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
 ];
 
 export default function Sidebar({ activeTab, onSelectTab }) {
-  // `upcoming=true` filters on date only, so cancelled and rejected visits are
-  // still in the response - count the live ones here.
-<<<<<<< HEAD
+  // Fetch upcoming appointments and count active ones.
   const { data } = useAsync(
     () => appointments.mine({ upcoming: true, limit: 100 }),
     [],
   );
+
   const upcomingCount = (data || []).filter((a) =>
     ["requested", "confirmed", "rescheduled"].includes(a.status),
-=======
-  const { data } = useAsync(() => appointments.mine({ upcoming: true, limit: 100 }), []);
-  const upcomingCount = (data || []).filter((a) =>
-    ['requested', 'confirmed', 'rescheduled'].includes(a.status),
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
   ).length;
 
   return (
@@ -57,55 +36,45 @@ export default function Sidebar({ activeTab, onSelectTab }) {
         <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
           <HeartPulse className="w-6 h-6 text-white animate-pulse" />
         </div>
+
         <div>
           <h1 className="font-bold text-base tracking-tight text-white flex items-center gap-1.5">
             SWASTHYA <span className="text-blue-400">SETU</span>
           </h1>
-<<<<<<< HEAD
+
           <span className="text-[10px] font-medium text-emerald-400 tracking-wide uppercase">
             A BRIDGE TOWARDS HEALTH
           </span>
-=======
-          <span className="text-[10px] font-medium text-emerald-400 tracking-wide uppercase">A BRIDGE TOWARDS HEALTH</span>
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
         </div>
       </div>
 
       <nav className="p-3 space-y-1.5 flex-1">
-<<<<<<< HEAD
         <p className="px-3 py-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
           Menu
         </p>
-=======
-        <p className="px-3 py-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Menu</p>
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
+
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
           const isActive = activeTab === id;
+
           return (
             <button
               key={id}
               onClick={() => onSelectTab(id)}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 isActive
-<<<<<<< HEAD
                   ? "bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold"
                   : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}
             >
               <Icon
-                className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-400"}`}
+                className={`w-4 h-4 ${
+                  isActive ? "text-white" : "text-slate-400"
+                }`}
               />
+
               <span>{label}</span>
+
               {id === "appointments" && upcomingCount > 0 && (
-=======
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
-                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-              <span>{label}</span>
-              {id === 'appointments' && upcomingCount > 0 && (
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
                 <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-500/20 text-blue-300">
                   {upcomingCount}
                 </span>
@@ -121,25 +90,18 @@ export default function Sidebar({ activeTab, onSelectTab }) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
           </span>
-<<<<<<< HEAD
+
           <span className="text-xs font-semibold text-rose-300">
             Emergency 24x7
           </span>
         </div>
+
         <p className="text-xs text-slate-300 mb-3">
           Direct line to ambulance & emergency doctor triage.
         </p>
-=======
-          <span className="text-xs font-semibold text-rose-300">Emergency 24x7</span>
-        </div>
-        <p className="text-xs text-slate-300 mb-3">Direct line to ambulance & emergency doctor triage.</p>
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
+
         <EmergencyButton />
       </div>
     </aside>
   );
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 13a3d08f78a9edfb701b6404460c17239bff651e
