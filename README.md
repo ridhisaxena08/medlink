@@ -1,4 +1,4 @@
-# Swasthya Setu — GitHub frontend integration files
+# Swasthya Setu — A BRIDGE TOWARDS HEALTH
 
 This is a small integration bundle for adding the Saathi chat widget to the EXISTING Vercel frontend. It is not a replacement for the entire existing website.
 
