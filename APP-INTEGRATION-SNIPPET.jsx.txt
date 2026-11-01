@@ -1,0 +1,30 @@
+INTEGRATE INTO YOUR EXISTING APP — DO NOT REPLACE YOUR WHOLE App.jsx
+
+1) Add this import to your existing React app entry component (often src/App.jsx):
+
+import SaathiChat from './components/features/saathi/SaathiChat';
+
+Adjust the relative path if your App.jsx is in a different folder.
+
+2) Render <SaathiChat /> once inside your main app JSX, near the end of the top-level app container. Example:
+
+return (
+  <div>
+    {/* Keep all your existing app UI here */}
+    <SaathiChat />
+  </div>
+);
+
+Do not replace the existing app layout or pages with the example above. Keep your current code and add only the import and component.
+
+3) SaathiChat uses lucide-react icons. If the existing frontend does not already have this dependency, add it to the frontend package and reinstall dependencies:
+   npm install lucide-react
+
+4) In Vercel → existing project → Settings → Environment Variables, add:
+   Name: VITE_API_BASE_URL
+   Value: https://medlink-8vbl.onrender.com
+   Environment: Production (and Preview if needed)
+
+5) Push the changes to the same GitHub branch connected to the existing Vercel production deployment. Vercel should redeploy automatically.
+
+6) The backend must actually support POST /api/saathi/chat and allow CORS from https://medlink-sand-seven.vercel.app. The current live backend's compatibility has not been verified. If Saathi returns 404/503/CORS errors, backend changes are needed too.
